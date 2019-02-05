@@ -1,0 +1,1278 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication1
+{
+    public class Customer
+    {
+        public int CustomerID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? CustomerTypeID { get; set; }
+        public string EmailAdress { get; set; }
+    }
+
+
+    public class CustomerRepository
+    {
+        public static List<Customer> retrive()
+        {
+            List<Customer> custlist = new List<Customer>()
+            {
+                new Customer {
+                                CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
+                                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1},
+
+                              new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
+                              EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null},
+
+                              new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
+                              EmailAdress="gowri22@gmail.com",CustomerTypeID =1},
+
+                              new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
+                              EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2}
+
+
+                             };
+
+            return custlist;
+        }
+
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var custlist = CustomerRepository.retrive();
+            // usage of ananomous types in two ways 
+            var query = from cust in custlist where cust.CustomerTypeID == 1 select new
+            {
+                Name = cust.FirstName + " " + cust.LastName,
+
+                Email=cust.EmailAdress
+            };
+            var query2 = custlist.Where(c => c.CustomerTypeID == 1).Select(c => new {Name=c.FirstName + " "+c.LastName,Email=c.EmailAdress });
+            foreach(var item in query)
+            {
+
+                Console.WriteLine("Full Name is {0} and Email id is {1}", item.Name, item.Email);
+            }
+            foreach (var item in query2)
+            {
+
+                Console.WriteLine("Full Name is {0} and Email id is {1}", item.Name, item.Email);
+            }
+            Console.WriteLine("enter the customer id");
+            int id = Convert.ToInt16(Console.ReadLine());
+            Customer custfound = (from cust in custlist where cust.CustomerID == id select cust).FirstOrDefault();
+            Customer custfound2 = custlist.Where(a => a.CustomerID == id).FirstOrDefault();
+            Customer custfound3 = custlist.FirstOrDefault(c => c.CustomerID == id);
+            Customer custfound4 = custlist.FirstOrDefault(c => { Console.WriteLine("hai");return c.CustomerID == id; });
+            //for multiline statements we are using it ...
+
+            Customer custfound5 = custlist.Where(a => a.CustomerTypeID == id).Skip(1).FirstOrDefault();
+            // this will print me second value as matching value with that id first i will skip and next 
+            // matching value i will put okay .
+
+            if(custfound!=null)
+            {
+                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
+                    id,custfound.FirstName,custfound.LastName);
+            }
+            else
+            {
+
+                Console.WriteLine("the person with this {0} is not there",id);
+                   
+            }
+
+            if (custfound2 != null)
+            {
+                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
+                    id, custfound2.FirstName, custfound2.LastName);
+            }
+            else
+            {
+
+                Console.WriteLine("the person with this {0} is not there", id);
+
+            }
+
+            if (custfound3 != null)
+            {
+                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
+                    id, custfound3.FirstName, custfound3.LastName);
+            }
+            else
+            {
+
+                Console.WriteLine("the person with this {0} is not there", id);
+
+            }
+
+            if (custfound4 != null)
+            {
+                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
+                    id, custfound4.FirstName, custfound4.LastName);
+            }
+            else
+            {
+
+                Console.WriteLine("the person with this {0} is not there", id);
+
+            }
+
+            if (custfound5 != null)
+            {
+                Console.WriteLine("the customer  with Id= {0} is there and name is {1} {2} ",
+                    id, custfound5.FirstName, custfound5.LastName);
+            }
+            else
+            {
+
+                Console.WriteLine("the person with this {0} is not there", id);
+
+            }
+
+            Console.WriteLine("sorting diferent ways ");
+            var sorbyname = custlist.OrderBy(c => c.FirstName);
+            //u can check it from notes different functions are there just subsitite here directly and check it 
+            Console.WriteLine("sort by firstname");
+            Console.WriteLine("******************");
+            foreach(var item in sorbyname)
+            {
+                Console.WriteLine(item.FirstName);
+            }
+            Console.ReadLine();
+
+
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------
+Join demo good example 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication2
+{
+
+   public class Employee
+    {
+        public int EmpId { set; get; }
+        public string EmpName { set; get; }
+        public int DeptId { set; get; }
+    }
+
+   public  class Dept
+    {
+        public int DeptId { set; get; }
+        public string DeptName { set; get; }
+    }
+
+    public class Repository
+    {
+
+        public static  List<Employee> Empretrive()
+        {
+
+            List<Employee> emplist = new List<Employee>()
+            {
+                new Employee {EmpId=101,EmpName="ravi",DeptId=10 },
+                new Employee {EmpId=102,EmpName="Suresh",DeptId=20 },
+                new Employee {EmpId=103,EmpName="Mandakini",DeptId=30 },
+                new Employee {EmpId=104,EmpName="Shraddha",DeptId=20 },
+                new Employee {EmpId=105,EmpName="Kian",DeptId=10 },
+
+
+
+            };
+            return emplist;
+        }
+
+        public static List<Dept> Deptretrive()
+        {
+            List<Dept> deptlist = new List<Dept>()
+            {
+                new Dept {DeptId=10,DeptName="Software" },
+                new Dept {DeptId=20,DeptName="Sales" },
+                new Dept {DeptId=30,DeptName="HR" }
+            };
+
+            return deptlist;
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Employee> emplist = Repository.Empretrive();
+           List<Dept> deptlist = Repository.Deptretrive();
+
+            var getNamesandDept = 
+                emplist.Join(deptlist, d => d.DeptId, e => 
+                e.DeptId, (e,d) => new {EmpName1=e.EmpName,DeptName1=d.DeptName });
+
+            foreach(var item in getNamesandDept)
+            {
+
+                Console.WriteLine("The Employee with name {0} is working in {1} Dept", item.EmpName1, item.DeptName1);
+
+            }
+
+            Console.ReadLine();
+        }
+    }
+}
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Usage of SelectMany 
+
+first version of program showing master child table with way to dislay them okay later on i will come to selectmany in this i have shown
+how to display collection preoperty and also display child elements of collection property okay .
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication3
+{
+    // here customer is master table and as it is master tale and one customer can have many invoice so i added 
+    // list property into Customer and Invoice is child table so it has customer id as foreigen key u can consider 
+
+    public class Customer
+    {
+        public int CustomerID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? CustomerTypeID { get; set; }
+        public string EmailAdress { get; set; }
+        public List<Invoice> InvoiceList { get; set; }
+		// this is an invoice list for this particular customer what u can do u can introduce this list later okay .
+		// for better understanding as you are experienced i had directly put it okay .
+		
+		
+    }
+
+    public class Invoice
+    {
+        public int InvoiceID { get; set; }
+        public int CustomerID { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool? IsPaid { get; set; }
+    }
+
+    public class Repository
+    {
+        // for a customer list of invoices means how many invoices he has made we can i want to retrive 
+        // all the list employees
+        public static List<Invoice> InvoiceRetrive(int customerid)
+        {
+            // first create a list of invoices then we can pass customerid value 
+
+            List<Invoice> inv_list = new List<Invoice>
+                 {
+                 new Invoice {InvoiceID=1,CustomerID =1,InvoiceDate =new DateTime
+                (2013,6,20),
+                 DueDate =new DateTime (2013,8,29),IsPaid =null },
+                 new Invoice {InvoiceID=2,CustomerID =1,InvoiceDate =new DateTime
+                (2013,7,20),
+                 DueDate =new DateTime (2013,8,20),IsPaid =null },
+                 new Invoice {InvoiceID=3,CustomerID =2,InvoiceDate =new DateTime
+                (2013,7,25),
+                 DueDate =new DateTime (2013,8,25),IsPaid =null },
+                 new Invoice {InvoiceID=4,CustomerID =3,InvoiceDate =new DateTime
+                (2013,7,1),
+                 DueDate =new DateTime (2013,9,1),IsPaid =true }
+                 };
+
+            List<Invoice> filtered_list = inv_list.Where(i => i.CustomerID == customerid).ToList();
+            return filtered_list;
+
+
+        }
+        // so customer previous class is modiifed as it contains a collection property 
+        // I need to fill like this okay ...
+        public static List<Customer> Custretrive()
+        {
+            List<Invoice> InvoiceList = new List<Invoice>();
+            List<Customer> custlist = new List<Customer>()
+            {
+                 new Customer {CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
+                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1,
+                 InvoiceList =Repository.InvoiceRetrive(1)},
+                 new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
+                 EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null,
+                 InvoiceList =Repository.InvoiceRetrive(2)},
+                 new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
+                 EmailAdress="gowri22@gmail.com",CustomerTypeID =1,
+                 InvoiceList =Repository.InvoiceRetrive(3)},
+                 new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
+                 EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2,
+                  InvoiceList =Repository.InvoiceRetrive(4)},
+
+
+            };
+            return custlist;
+
+        }
+
+
+    }
+public    class Program
+    {
+        static void Main(string[] args)
+        {
+            var invlist = Repository.InvoiceRetrive(1);
+            Console.WriteLine("List of invoices for the employee withstomer id 1");
+            foreach (var item in invlist)
+            {
+                Console.WriteLine("{0} {1}", item.InvoiceID, item.CustomerID);
+            }
+
+            //now how u are  going to display a custlist which in turn has a invoice list for each customer ...
+
+            List<Customer> custlist = Repository.Custretrive();
+            Console.WriteLine("List of customers with their invoices ...");
+            Console.WriteLine("------------------------------------------------------------");
+            foreach (Customer custitem in custlist)
+            {
+
+                Console.WriteLine(custitem.FirstName+" "+custitem.LastName+"has raised "+custitem.InvoiceList.Count+"  invoices");
+                // as below code is not supporting i am not using placeholders
+                //Console.WriteLine("{0} {1) has raised {2} invoices ",
+                //    custitem.FirstName, custitem.LastName,custitem.InvoiceList.Count);
+
+                Console.WriteLine("------------------------------------------------------------");
+                foreach (var invitem in custitem.InvoiceList)
+                {
+                    Console.WriteLine("{0} {1}", invitem.InvoiceID, invitem.CustomerID);
+
+                }
+
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+
+so in the above program we have master table customer and child table invoice i had filled both using methods okay and you can fill anyone of them first as it is needed amyhow okay .
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+version 2 slight change above and this code is same only implemeted select many thats all appneded some code 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication3
+{
+    // here customer is master table and as it is master tale and one customer can have many invoice so i added 
+    // list property into Customer and Invoice is child table so it has customer id as foreigen key u can consider 
+
+    public class Customer
+    {
+        public int CustomerID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? CustomerTypeID { get; set; }
+        public string EmailAdress { get; set; }
+        public List<Invoice> InvoiceList { get; set; }
+    }
+
+    public class Invoice
+    {
+        public int InvoiceID { get; set; }
+        public int CustomerID { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool? IsPaid { get; set; }
+    }
+
+    public class Repository
+    {
+        // for a customer list of invoices means how many invoices he has made we can i want to retrive 
+        // all the list employees
+        public static List<Invoice> InvoiceRetrive(int customerid)
+        {
+            // first create a list of invoices then we can pass customerid value 
+
+            List<Invoice> inv_list = new List<Invoice>
+                 {
+                 new Invoice {InvoiceID=1,CustomerID =1,InvoiceDate =new DateTime
+                (2013,6,20),
+                 DueDate =new DateTime (2013,8,29),IsPaid =null },
+                 new Invoice {InvoiceID=2,CustomerID =1,InvoiceDate =new DateTime
+                (2013,7,20),
+                 DueDate =new DateTime (2013,8,20),IsPaid =null },
+                 new Invoice {InvoiceID=3,CustomerID =2,InvoiceDate =new DateTime
+                (2013,7,25),
+                 DueDate =new DateTime (2013,8,25),IsPaid =null },
+                 new Invoice {InvoiceID=4,CustomerID =3,InvoiceDate =new DateTime
+                (2013,7,1),
+                 DueDate =new DateTime (2013,9,1),IsPaid =true }
+                 };
+
+            List<Invoice> filtered_list = inv_list.Where(i => i.CustomerID == customerid).ToList();
+            return filtered_list;
+
+
+        }
+        // so customer previous class is modiifed as it contains a collection property 
+        // I need to fill like this okay ...
+        public static List<Customer> Custretrive()
+        {
+            List<Invoice> InvoiceList = new List<Invoice>();
+            List<Customer> custlist = new List<Customer>()
+            {
+                 new Customer {CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
+                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1,
+                 InvoiceList =Repository.InvoiceRetrive(1)},
+                 new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
+                 EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null,
+                 InvoiceList =Repository.InvoiceRetrive(2)},
+                 new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
+                 EmailAdress="gowri22@gmail.com",CustomerTypeID =1,
+                 InvoiceList =Repository.InvoiceRetrive(3)},
+                 new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
+                 EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2,
+                  InvoiceList =Repository.InvoiceRetrive(4)},
+
+
+            };
+            return custlist;
+
+        }
+        //customers who have not paid i want to display those customers check notes u can understand it in clear
+        // so i am just trying to practise it here i have written 
+        //two IEnumerable here because inside custlist we have invoice list  
+        //public static IEnumerable<IEnumerable<Invoice>> GetOverDueCustomers(List<Customer> custlist)
+        //{
+        //    var query = custlist.Select(c => c.InvoiceList.Where(i => (i.IsPaid ?? false)
+        //     == false));
+        //    return query;
+        //}
+
+        public static IEnumerable<Customer> GetOverDueCustomers(List<Customer> custlist)
+        {
+            var query = custlist.SelectMany(c => c.InvoiceList.Where(i => (i.IsPaid ?? false)
+             == false),(c,i)=>c);
+            return query;
+        }
+
+
+
+    }
+    public    class Program
+    {
+      public  static void Main(string[] args)
+        {
+            var invlist = Repository.InvoiceRetrive(1);
+            Console.WriteLine("List of invoices for the employee withstomer id 1");
+            foreach (var item in invlist)
+            {
+                Console.WriteLine("{0} {1}", item.InvoiceID, item.CustomerID);
+            }
+
+            //now how u are  going to display a custlist which in turn has a invoice list for each customer ...
+
+            List<Customer> custlist = Repository.Custretrive();
+            Console.WriteLine("List of customers with their invoices ...");
+            Console.WriteLine("------------------------------------------------------------");
+            foreach (Customer custitem in custlist)
+            {
+
+                Console.WriteLine(custitem.FirstName+" "+custitem.LastName+"has raised "+custitem.InvoiceList.Count+"  invoices");
+                // as below code is not supporting i am not using placeholders
+                //Console.WriteLine("{0} {1) has raised {2} invoices ",
+                //    custitem.FirstName, custitem.LastName,custitem.InvoiceList.Count);
+
+                Console.WriteLine("------------------------------------------------------------");
+                foreach (var invitem in custitem.InvoiceList)
+                {
+                    Console.WriteLine("{0} {1}", invitem.InvoiceID, invitem.CustomerID);
+
+                }
+
+            }
+
+            var cust_list = Repository.Custretrive();
+            var overduecustomers = Repository.GetOverDueCustomers(cust_list);
+            //foreach (var item in overduecustomers)
+            //{
+            //    foreach (var childitem in item)
+            //    {
+            //        Console.WriteLine("overdue --- >" + childitem.DueDate.ToString());
+            //    }
+            //}
+            // but this is not the result i want the customes so include one delegate type like 
+            // how  u include in joins in above i overduecustomers and use selectmany which will solve the 
+            // problems which we are facing okay which i have done and and previous code commented and 
+            // for each also modified no need to write two nested for each and previous code commented okay 
+
+            foreach(var item in overduecustomers)
+            {
+                Console.WriteLine(item.FirstName);
+
+            }
+            // so naresh and raghavendra had not paid invoice and gopi has not at all rasied invoice 
+            //but gowri has paid okay so like this it goes and we get correct output only thing is 
+            // raghavendra is coming twice check what u can do for it or not required okay .
+
+            Console.ReadLine();
+        }
+    }
+}
+
+ so till now what and all coding i have done for that i will implement the stuff in winforms application so i kept one datagridview control and two buttons as button1 and button2 and i had kept combobox as well okay.. and whole coding i had pasted down in global section same classes i included okay 
+ 
+ using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication1
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        public class Customer
+        {
+            public int CustomerID { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public int? CustomerTypeID { get; set; }
+            public string EmailAdress { get; set; }
+        }
+
+
+        public class CustomerRepository
+        {
+            public static List<Customer> retrive()
+            {
+                List<Customer> custlist = new List<Customer>()
+            {
+                new Customer {
+                                CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
+                                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1},
+
+                              new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
+                              EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null},
+
+                              new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
+                              EmailAdress="gowri22@gmail.com",CustomerTypeID =1},
+
+                              new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
+                              EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2}
+
+
+                             };
+
+                return custlist;
+            }
+
+
+            public static dynamic getCustomertypeId(List<Customer> custlist)
+            {
+
+                var query = custlist.Select(c => new { c.CustomerTypeID });
+                return query.ToList();
+
+            }
+
+        }
+
+       
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            var custlist = CustomerRepository.retrive();
+            comboBox1.DisplayMember = "CustomerTypeID";
+            comboBox1.ValueMember = "CustomerTypeID";
+            comboBox1.DataSource = CustomerRepository.getCustomertypeId(custlist);
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //based on selected customer type retriving the details under 
+            // that category
+
+            var custlist = CustomerRepository.retrive();
+            var query = from cust in custlist
+                        where cust.CustomerTypeID ==Convert.ToInt16(comboBox1.Text)
+                        select new
+                        {
+                            Name = cust.FirstName + " " + cust.LastName,
+
+                            Email = cust.EmailAdress
+                        };
+
+            dataGridView1.DataSource = query.ToList();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //displaying customer list 
+            var custlist = CustomerRepository.retrive();
+            dataGridView1.DataSource = custlist.ToList();
+        }
+        public class Employee
+        {
+            public int EmpId { set; get; }
+            public string EmpName { set; get; }
+            public int DeptId { set; get; }
+        }
+
+        public class Dept
+        {
+            public int DeptId { set; get; }
+            public string DeptName { set; get; }
+        }
+
+        public class Repository
+        {
+
+            public static List<Employee> Empretrive()
+            {
+
+                List<Employee> emplist = new List<Employee>()
+            {
+                new Employee {EmpId=101,EmpName="ravi",DeptId=10 },
+                new Employee {EmpId=102,EmpName="Suresh",DeptId=20 },
+                new Employee {EmpId=103,EmpName="Mandakini",DeptId=30 },
+                new Employee {EmpId=104,EmpName="Shraddha",DeptId=20 },
+                new Employee {EmpId=105,EmpName="Kian",DeptId=10 },
+
+
+
+            };
+                return emplist;
+            }
+
+            public static List<Dept> Deptretrive()
+            {
+                List<Dept> deptlist = new List<Dept>()
+            {
+                new Dept {DeptId=10,DeptName="Software" },
+                new Dept {DeptId=20,DeptName="Sales" },
+                new Dept {DeptId=30,DeptName="HR" }
+            };
+
+                return deptlist;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            List<Employee> emplist = Repository.Empretrive();
+            List<Dept> deptlist = Repository.Deptretrive();
+
+            var getNamesandDept =
+                emplist.Join(deptlist, d => d.DeptId,e1 => e1.DeptId, (e1, d) => new { EmpName1 = e1.EmpName, DeptName1 = d.DeptName });
+
+            dataGridView1.DataSource = getNamesandDept.ToList();
+
+        }
+    }
+}
+
+
+Now let us move to totaling and grouping concepts and all which we will be doing in console based application only okay .
+
+now we have invoice class earlier i am modifying that invoice class like this 
+
+public class Invoice
+ {
+ public int InvoiceID { get; set; }
+ public int CustomerID { get; set; }
+ public DateTime InvoiceDate { get; set; }
+ public DateTime DueDate { get; set; }
+ public bool? IsPaid { get; set; }
+ public decimal Amount { get; set; }
+ public int NumberOfUnits { get; set; }
+ public decimal DiscountPercent { get; set; }
+ public decimal TotalAmount { get; set; }
+ }
+ 
+ 
+ And the question on totaling is like this 
+ 
+ what is the total amount we have invoiced and how many units we have sold 
+ 
+ 
+ so for convienince i am changing my class like this 
+ 
+ public class Invoice
+ {
+ public int InvoiceID { get; set; }
+ public int CustomerID { get; set; }
+ public DateTime InvoiceDate { get; set; }
+ public DateTime DueDate { get; set; }
+ public bool? IsPaid { get; set; }
+ public decimal Amount { get; set; }
+ public int NumberOfUnits { get; set; }
+ public decimal DiscountPercent { get; set; }
+ public decimal TotalAmount {
+ get
+ {
+ return this.Amount - ( this.Amount *(this.DiscountPercent /100));
+ }
+ }
+ }
+ 
+ I am making total amount as read only property okay .
+ 
+ so now going with code in visual studio after coding that i am putting it back here and pasting it 
+ 
+ using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication4
+{
+    public class Invoice
+    {
+        public int InvoiceID { get; set; }
+        public int CustomerID { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool? IsPaid { get; set; }
+        public decimal Amount { get; set; }
+        public int NumberOfUnits { get; set; }
+        public decimal DiscountPercent { get; set; }
+        public decimal TotalAmount
+        {
+            get
+            {
+                return this.Amount - (this.Amount * (this.DiscountPercent / 100));
+            }
+        }
+    }
+    public class InvoiceRepository
+    {
+        public List<Invoice> Retrive()
+        {
+            List<Invoice> inv_list = new List<Invoice>
+                            {
+                            new Invoice {InvoiceID=1,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,6,20),DueDate =new DateTime (2013,8,29),IsPaid =null,
+                            Amount=199.99M,NumberOfUnits =20,DiscountPercent =0M
+                            },
+                            new Invoice {InvoiceID=2,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,7,20),
+                            DueDate =new DateTime (2013,8,20),IsPaid =null ,
+                            Amount=98.50M,NumberOfUnits =10,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=3,CustomerID =2,InvoiceDate =new DateTime
+                        (2013,7,25),
+                            DueDate =new DateTime (2013,8,25),IsPaid =null,
+                            Amount=250M,NumberOfUnits =25,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=4,CustomerID =3,InvoiceDate =new DateTime
+                        (2013,7,1),
+                            DueDate =new DateTime (2013,9,1),IsPaid =true,
+                            Amount=20M,NumberOfUnits =2,DiscountPercent =15M
+                            },
+                            new Invoice {InvoiceID=5,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,8,20),
+                            DueDate =new DateTime (2013,9,29),IsPaid =true,
+                            Amount=225M,NumberOfUnits =22,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=6,CustomerID =2,InvoiceDate =new DateTime
+                        (2013,8,20),
+                            DueDate =new DateTime (2013,8,20),IsPaid =false,
+                            Amount=75M,NumberOfUnits =08,DiscountPercent =0M
+                            },
+                            new Invoice {InvoiceID=7,CustomerID =3,InvoiceDate =new DateTime
+                        (2013,8,25),
+                            DueDate =new DateTime (2013,9,25),IsPaid =null,
+                            Amount=500M,NumberOfUnits =42,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=8,CustomerID =4,InvoiceDate =new DateTime
+                        (2013,8,1),
+                            DueDate =new DateTime (2013,9,1),IsPaid =true,
+                            Amount=75M,NumberOfUnits =7,DiscountPercent =0M
+                            }
+                            };
+           
+                                    return inv_list;
+        }
+
+        public List<Invoice> Retrive(int customerid)
+        {
+            var invoicelist = this.Retrive();
+            List<Invoice> filteredlist = invoicelist.Where(i => i.CustomerID ==
+           customerid).ToList();
+            return filteredlist;
+        }
+
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            InvoiceRepository invrep = new InvoiceRepository();
+            List<Invoice> invlist = invrep.Retrive();
+            decimal totalamount = invlist.Sum(c => c.TotalAmount);
+            Console.WriteLine("The total amount invoiced is {0}", totalamount);
+            int unitssold = invlist.Sum(c => c.NumberOfUnits);
+            Console.WriteLine("The total units sold is {0}",unitssold);
+
+            // for a particular customer invoice amounted 
+            Console.WriteLine("enter the customer id for which u want to find out total amount invoiced and units sold to that customer ");
+            int customerid = Convert.ToInt16(Console.ReadLine());
+            List<Invoice> custinvoicelist = invrep.Retrive(customerid);
+
+            decimal totalamountforcustomer = custinvoicelist.Sum(c => c.TotalAmount);
+            Console.WriteLine("The total amount invoiced for customer with id {0} is {1}",customerid, totalamountforcustomer);
+            int unitssoldforcustomer = custinvoicelist.Sum(c => c.NumberOfUnits);
+            Console.WriteLine("The total units sold for customer with id {0}  is {1}",customerid, unitssoldforcustomer);
+            Console.ReadLine();
+
+        }
+    }
+}
+
+
+Now let us move to grouping concept and see some of the demos okay 
+follow the notes only later on i had added classes based on the stuff which i need to code in main 
+program okay .
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication5
+{
+    public class CustomerType
+    {
+        public int CustomerTypeID { get; set; }
+        public string TypeName { get; set; }
+        public int? DisplayOrder { get; set; }
+    }
+    public class CustomerTypeRepository
+    {
+        public static List<CustomerType> Retrive()
+        {
+            List<CustomerType> cust_type_list = new List<CustomerType>{
+                     new CustomerType(){CustomerTypeID =1,TypeName
+                    ="corporate" ,DisplayOrder=2},
+                     new CustomerType(){CustomerTypeID =2,TypeName
+                    ="individual",DisplayOrder=1},
+                     new CustomerType(){CustomerTypeID =3,TypeName ="educator" ,DisplayOrder=4
+                    },
+                     new CustomerType(){CustomerTypeID =4,TypeName
+                    ="government",DisplayOrder=3 },
+                     };
+            return cust_type_list;
+        }
+    }
+        public class Customer
+    {
+        public int CustomerID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int? CustomerTypeID { get; set; }
+        public string EmailAdress { get; set; }
+        public List<Invoice> InvoiceList { get; set; }
+        // this is an invoice list for this particular customer what u can do u can introduce this list later okay .
+        // for better understanding as you are experienced i had directly put it okay .
+
+
+    }
+
+    public class CustomerRepository
+    {
+
+        public static List<Customer> Custretrive()
+        {
+            List<Invoice> InvoiceList = new List<Invoice>();
+            InvoiceRepository invrp = new InvoiceRepository();
+            List<Customer> custlist = new List<Customer>()
+            {
+                 new Customer {CustomerID =1,FirstName ="Raghavendra", LastName ="Ponde",
+                 EmailAdress="Raghuponde@yahoo.com" ,CustomerTypeID =1,
+                 InvoiceList =invrp.Retrive(1)},
+                 new Customer {CustomerID =2,FirstName ="Naresh" , LastName ="Ponde" ,
+                 EmailAdress="naresh.1107@reddiffmail.com" ,CustomerTypeID =null,
+                 InvoiceList =invrp.Retrive(2)},
+                 new Customer {CustomerID =3,FirstName ="Gowri", LastName ="rani" ,
+                 EmailAdress="gowri22@gmail.com",CustomerTypeID =1,
+                 InvoiceList =invrp.Retrive(3)},
+                 new Customer {CustomerID =4,FirstName ="gopinatha ", LastName ="rao",
+                 EmailAdress="gopi#45@yahoo.com",CustomerTypeID =2,
+                  InvoiceList =invrp.Retrive(4)},
+
+
+            };
+            return custlist;
+
+        }
+
+    }
+
+    public class Invoice
+    {
+        public int InvoiceID { get; set; }
+        public int CustomerID { get; set; }
+        public DateTime InvoiceDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public bool? IsPaid { get; set; }
+        public decimal Amount { get; set; }
+        public int NumberOfUnits { get; set; }
+        public decimal DiscountPercent { get; set; }
+        public decimal TotalAmount
+        {
+            get
+            {
+                return this.Amount - (this.Amount * (this.DiscountPercent / 100));
+            }
+        }
+    }
+    public class InvoiceRepository
+    {
+        public List<Invoice> Retrive()
+        {
+            List<Invoice> inv_list = new List<Invoice>
+                            {
+                            new Invoice {InvoiceID=1,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,6,20),DueDate =new DateTime (2013,8,29),IsPaid =null,
+                            Amount=199.99M,NumberOfUnits =20,DiscountPercent =0M
+                            },
+                            new Invoice {InvoiceID=2,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,7,20),
+                            DueDate =new DateTime (2013,8,20),IsPaid =null ,
+                            Amount=98.50M,NumberOfUnits =10,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=3,CustomerID =2,InvoiceDate =new DateTime
+                        (2013,7,25),
+                            DueDate =new DateTime (2013,8,25),IsPaid =null,
+                            Amount=250M,NumberOfUnits =25,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=4,CustomerID =3,InvoiceDate =new DateTime
+                        (2013,7,1),
+                            DueDate =new DateTime (2013,9,1),IsPaid =true,
+                            Amount=20M,NumberOfUnits =2,DiscountPercent =15M
+                            },
+                            new Invoice {InvoiceID=5,CustomerID =1,InvoiceDate =new DateTime
+                        (2013,8,20),
+                            DueDate =new DateTime (2013,9,29),IsPaid =true,
+                            Amount=225M,NumberOfUnits =22,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=6,CustomerID =2,InvoiceDate =new DateTime
+                        (2013,8,20),
+                            DueDate =new DateTime (2013,8,20),IsPaid =false,
+                            Amount=75M,NumberOfUnits =08,DiscountPercent =0M
+                            },
+                            new Invoice {InvoiceID=7,CustomerID =3,InvoiceDate =new DateTime
+                        (2013,8,25),
+                            DueDate =new DateTime (2013,9,25),IsPaid =null,
+                            Amount=500M,NumberOfUnits =42,DiscountPercent =10M
+                            },
+                            new Invoice {InvoiceID=8,CustomerID =4,InvoiceDate =new DateTime
+                        (2013,8,1),
+                            DueDate =new DateTime (2013,9,1),IsPaid =true,
+                            Amount=75M,NumberOfUnits =7,DiscountPercent =0M
+                            }
+                            };
+
+            return inv_list;
+        }
+
+        public List<Invoice> Retrive(int customerid)
+        {
+            var invoicelist = this.Retrive();
+            List<Invoice> filteredlist = invoicelist.Where(i => i.CustomerID ==
+           customerid).ToList();
+            return filteredlist;
+        }
+
+
+
+    }
+          class Program
+            {
+                static void Main(string[] args)
+                {
+            // now i want to do group by ispaid customer and not paid customer 
+                      InvoiceRepository invrep = new InvoiceRepository();
+
+                     var invlist = invrep.Retrive();
+
+            var query = invlist.GroupBy(inv => inv.IsPaid ?? false, inv => inv.TotalAmount, (groupkey, invtotal) => new
+            {
+                key = groupkey,
+                invoiceamount =
+                        invtotal.Sum()
+            });
+
+
+            var query2 = invlist.GroupBy(inv => inv.IsPaid ?? false).Select(inv =>
+            new { inv.Key,Amount=inv.Sum(c=>c.TotalAmount),unitsamount=inv.Sum(c=>c.NumberOfUnits) });
+
+            var query3 = invlist.GroupBy(inv => inv.IsPaid ?? false, inv => new { inv.TotalAmount,inv.NumberOfUnits },
+                (groupkey, invtotal) => new
+                {
+                    key = groupkey,
+                    unitsamount =
+                      invtotal.Sum(c =>c.NumberOfUnits )
+             
+                      
+               });
+
+            Console.WriteLine("Group by single property examples are below ...");
+            Console.WriteLine("***************************************************");
+            foreach (var item in query)
+            {
+                Console.WriteLine(item.key + ": " + item.invoiceamount);
+            }
+            Console.WriteLine("------------------------------------------------------");
+            foreach (var item in query2)
+            {
+                Console.WriteLine(item.Key + ": " + item.Amount+":"+item.unitsamount);
+            }
+            Console.WriteLine("------------------------------------------------------");
+            foreach (var item in query3)
+            {
+                Console.WriteLine(item.key + ": " + item.unitsamount);
+            }
+            Console.WriteLine("------------------------------------------------------");
+            // above it is showing me values or categroy for null values also so i had made it wantedly 
+            // as ?? false so now two categories only i am seeing it and here key selector is there and in element selector 
+            // i can put only one value for which i am applying summation i tried all possible ways to put sum as selector 
+            // for numberofunits sold also okay but it is now working may be syntax is like that and we can go for some 
+            // other examples for the same task in internet where after .GroupBy i will not include all values inside that
+            // group by but use instead select clause ...like this some thing like this u can do it 
+            //var Query = from p in DCDC.EMP.GroupBy(p => p.departmentname)
+            //            select new
+            //            {
+            //                count = p.Count(),
+            //                p.First().departmentname,
+            //            };
+
+
+            Console.WriteLine("Group by multiple  property examples are below ...");
+            Console.WriteLine("***************************************************");
+                    var query4 = invlist.GroupBy(inv => new {
+                        Ispiad = inv.IsPaid ?? false,
+                        InvoiceMonth = inv.InvoiceDate.ToString("MMMM") // so here i am pulling the   month okay
+                           }
+                             , inv => inv.TotalAmount,
+                             (groupKey, invtotal) => new
+                             {
+                                 key = groupKey,
+                                 invoicedAmount = invtotal.Sum()
+                             });
+                    foreach (var item in query4)
+                    {
+                        Console.WriteLine(item.key.Ispiad + " /" + item.key.InvoiceMonth + ": " +
+                       item.invoicedAmount);
+                    }
+
+            Console.WriteLine("Group by parent  property examples are below ...");
+            Console.WriteLine("***************************************************");
+            var custlist = CustomerRepository.Custretrive();
+            
+            // so above added parent class and now i will get invoice total by customer type 
+                            var query5 = custlist.GroupBy(c => c.CustomerTypeID ?? 0,
+                 c => c.InvoiceList.Sum(inv => inv.TotalAmount),
+                  (groupKey, invtotal) => new
+                  {
+                      key = groupKey,
+                      invoicedamount = invtotal.Sum()
+                  });
+            foreach (var item in query5)
+            {
+                Console.WriteLine(item.key + ": " + item.invoicedamount);
+            }
+
+            // But i dont want the result with id i want it with customer type so another class i will add and its repository
+            //instead id so then u need to use join to invlove 
+            // two tables okay 
+
+            var custtypelist = CustomerTypeRepository.Retrive();
+            var customertypequery = custlist.Join(custtypelist,
+                          c => c.CustomerTypeID, ct => ct.CustomerTypeID,
+                          (c, ct) => new
+                          {
+                              customerinstance = c,
+                              customertypename = ct.TypeName
+                          });
+
+            Console.WriteLine("checking the result ...for my conveninece sake taking join and displaying  columns of my choice .");
+            foreach(var item in customertypequery)
+            {
+                Console.WriteLine(item.customerinstance.CustomerID + ":  " + item.customertypename);
+
+
+            }
+            Console.WriteLine("Now displaying another query ...");
+            var query6 = customertypequery.GroupBy(c => c.customertypename, c => c.customerinstance.InvoiceList.Sum(inv => inv.TotalAmount),
+                                         (groupKey, invtotal) => new
+                         {
+                             key = groupKey,
+                             invoicedamount = invtotal.Sum()
+                         });
+
+            foreach (var item in query6)
+            {
+                Console.WriteLine(item.key + ": " + item.invoicedamount);
+            }
+
+            // so i had tried all demos and here in coding you can refer the notes which is required ....for the code 
+            // which i had tried the notes is availble in linq notes but thing is that i had gone in detail some stuff to 
+            // check the reality ....
+            Console.ReadLine();
+
+           
+
+
+        }
+            }
+}
+
+ 
+
+Let us see another example on group by like above where i will group by odd numbers group and then list all the elements in that group which is oddby okay 
+
+so the code is below and self understanding i have just kept the code 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication6
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] numbers = new int[] {12,4,5,8,33,51,81,93,44,12,27 };
+
+            var groups = from number in numbers
+                        orderby number ascending
+                        group number by number % 2 != 0
+                       into groupednumbers
+                        orderby groupednumbers.Key descending
+                        select new
+                        {
+                            isodd=groupednumbers.Key,
+                            groupednumbers
+
+                        };
+
+             foreach(var item in groups)
+            {
+
+                Console.WriteLine(item.isodd);
+                foreach(var value in item.groupednumbers )
+                {
+                    Console.WriteLine(value);
+
+
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.ReadLine();
+        }
+    }
+}
+
+
+output will be like this 
+
+True
+5
+27
+33
+51
+81
+93
+
+False
+4
+8
+12
+12
+44
+
+I want to find out sum of each groups here 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace ConsoleApplication6
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] numbers = new int[] {12,4,5,8,33,51,81,93,44,12,27 };
+
+            var groups = from number in numbers
+                         orderby number ascending
+                         group number by number % 2 != 0
+                       into groupednumbers
+                         orderby groupednumbers.Key descending
+                         select new
+                         {
+                             isodd = groupednumbers.Key,
+                             groupednumbers
+                             //sumodd = (from number1 in numbers
+                             //          where number1 % 2 != 0 select number1).Sum(),
+
+                             //sumeven = numbers.Where (c => c % 2 == 0).Sum()
+
+                         };
+
+             foreach(var item in groups)
+            {
+
+                Console.WriteLine(item.isodd);
+                foreach(var value in item.groupednumbers )
+                {
+                    Console.WriteLine(value);
+
+
+                }
+                Console.WriteLine("The sum of  numbers is {0}", item.groupednumbers.Sum());
+             //   Console.WriteLine("The sum of odd numbers is {0}", item.sumodd);// this is printing two times so commented okay 
+                Console.WriteLine();
+            }
+
+            Console.ReadLine();
+        }
+    }
+}
+
+
+
